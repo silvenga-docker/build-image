@@ -20,7 +20,7 @@ export class Action {
             settings.dockerRegistery
         );
 
-        let context = await docker.createBuildContext(
+        let context = docker.createBuildContext(
             registry,
             settings.dockerImageName,
             settings.dockerTags,

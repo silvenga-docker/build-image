@@ -1,0 +1,51 @@
+name: "Build"
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - 'releases/*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Get yarn cache
+      id: yarn-cache
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v1
+      with:
+        path: ${{ steps.yarn-cache.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - run: yarn install
+    - run: yarn build
+    # - run: yarn test
+
+    - name: Run Action
+      uses: ./
+      with:
+        workingPath: ./example
+        dockerUserName: silvenga-docker
+        dockerPassword: ${{ secrets.GITHUB_TOKEN }}
+        dockerImageName: ${{ github.repository }}/example
+        dockerTags: latest,${{ github.sha }}
+
+    - name: Stage Deployment
+      run: |
+        mkdir -p staged/lib
+        mv action.yml staged/action.yml
+        mv lib/src/ staged/lib/src/
+    - name: Deploy Action
+      if: github.ref == 'refs/heads/master'
+      uses: s0/git-publish-subdir-action@v1.0.3
+      env:
+        REPO: self
+        BRANCH: latest
+        FOLDER: staged
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
