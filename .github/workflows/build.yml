@@ -40,6 +40,7 @@ jobs:
       run: |
         mkdir -p staged/lib
         mv action.yml staged/action.yml
+        mv node_modules staged/node_modules
         mv lib/src/ staged/lib/src/
     - name: Deploy Action
       if: github.ref == 'refs/heads/master'
