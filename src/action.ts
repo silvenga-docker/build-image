@@ -14,14 +14,14 @@ export class Action {
         let settings = this.settings;
         let docker = new Docker();
 
-        await docker.login(
+        let registry = await docker.login(
             settings.dockerUserName,
             settings.dockerPassword,
             settings.dockerRegistery
         );
 
         let context = await docker.createBuildContext(
-            settings.dockerRegistery,
+            registry,
             settings.dockerImageName,
             settings.dockerTags,
             settings.workingPath,

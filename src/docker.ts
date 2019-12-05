@@ -6,7 +6,7 @@ import * as fs from "fs";
 import * as exec from "@actions/exec";
 
 export class Docker {
-    public async login(username: string, password: string, loginServer: string) {
+    public async login(username: string, password: string, loginServer: string): Promise<IRegistry> {
 
         // https://github.com/Azure/docker-login/blob/master/src/login.ts
 
@@ -25,13 +25,17 @@ export class Docker {
         core.debug(`Writing docker config contents to ${dockerConfigPath}`);
         fs.writeFileSync(dockerConfigPath, JSON.stringify(config));
         issueCommand("set-env", { name: "DOCKER_CONFIG" }, dirPath);
-        console.log("DOCKER_CONFIG environment variable is set");
+
+        return {
+            dockerConfigFile: dirPath,
+            name: loginServer
+        };
     }
 
-    public createBuildContext(registry: string, name: string, tags: string[], buildContext: string = ".", dockerFile: string = "Dockerfile"): IBuildContext {
+    public createBuildContext(registry: IRegistry, name: string, tags: string[], buildContext: string = ".", dockerFile: string = "Dockerfile"): IBuildContext {
         let imageNames: string[] = [];
         for (let tag of tags) {
-            let imageName = `${registry}/${name}:${tag}`;
+            let imageName = `${registry.name}/${name}:${tag}`;
             imageNames.push(imageName);
         }
         return {
@@ -62,23 +66,36 @@ export class Docker {
 
     public async publish(images: IImages, options: string[] = []) {
         for (let image of images.imageNames) {
-            await exec.exec("docker", [
-                "push",
-                image,
-                ...options
-            ]);
+            await exec.exec(
+                "docker",
+                [
+                    "push",
+                    image,
+                    ...options
+                ],
+                {
+                    env: {
+                        DOCKER_CONFIG: images.registry.dockerConfigFile
+                    }
+                }
+            );
         }
     }
 }
 
+export interface IRegistry {
+    dockerConfigFile: string;
+    name: string;
+}
+
 export interface IBuildContext {
-    registry: string;
+    registry: IRegistry;
     imageNames: string[];
     buildContext: string;
     dockerFile: string;
 }
 
 export interface IImages {
-    registry: string;
+    registry: IRegistry;
     imageNames: string[];
 }
