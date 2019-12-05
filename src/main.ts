@@ -1,19 +1,19 @@
 import * as core from "@actions/core";
-import { wait } from "./wait";
+import { ISettings, Action } from "./action";
 
 async function run() {
-    try {
-        const ms = core.getInput("milliseconds");
-        console.log(`Waiting ${ms} milliseconds ...`);
+    let settings: ISettings = {
+        workingPath: core.getInput("workingPath", { required: true }),
+        dockerFile: core.getInput("dockerFile", { required: true }),
+        dockerRegistery: core.getInput("dockerRegistery", { required: true }),
+        dockerUserName: core.getInput("dockerUserName", { required: true }),
+        dockerPassword: core.getInput("dockerPassword", { required: true }),
+        dockerImageName: core.getInput("dockerImageName", { required: true }),
+        dockerTags: core.getInput("dockerTags", { required: true }).split(","),
+    };
 
-        core.debug((new Date()).toTimeString());
-        await wait(parseInt(ms, 10));
-        core.debug((new Date()).toTimeString());
-
-        core.setOutput("time", new Date().toTimeString());
-    } catch (error) {
-        core.setFailed(error.message);
-    }
+    let action = new Action(settings);
+    await action.run();
 }
 
-run();
+run().catch(core.setFailed);

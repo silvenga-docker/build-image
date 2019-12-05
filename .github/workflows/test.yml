@@ -18,4 +18,8 @@ jobs:
 
     - uses: ./
       with:
-        milliseconds: 1000
+        workingPath: ./example
+        dockerUserName: silvenga-docker
+        dockerPassword: ${{ secrets.GITHUB_TOKEN }}
+        dockerImageName: silvenga-docker/build-image/example
+        dockerTags: latest,${{ github.sha }}

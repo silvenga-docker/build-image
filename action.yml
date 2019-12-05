@@ -1,10 +1,25 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'build-image'
+description: 'Custom build action for silvenga-docker.'
+author: 'silvenga-docker'
 inputs:
-  myInput:              # change this
-    description: 'input description here'
-    default: 'default value if applicable'
+  workingPath:
+    description: 'The docker build context.'
+    default: '.'
+  dockerFile:
+    description: 'The docker file.'
+    default: 'Dockerfile'
+  dockerRegistery:
+    description: 'The docker registery.'
+    default: 'docker.pkg.github.com'
+  dockerUserName:
+    description: 'The docker registery username.'
+  dockerPassword:
+    description: 'The docker registery password.'
+  dockerImageName:
+    description: 'The docker image name including the repository.'
+  dockerTags:
+    description: 'The docker image tags, comma separated.'
+    default: 'latest'
 runs:
   using: 'node12'
   main: 'lib/src/main.js'
