@@ -1,10 +1,9 @@
 export function wait(milliseconds: number) {
     return new Promise((resolve) => {
-        if (isNaN(milliseconds)) { 
-            throw new Error('milliseconds not a number'); 
+        if (isNaN(milliseconds)) {
+            throw new Error("milliseconds not a number");
         }
 
-        setTimeout(() => resolve("done!"), milliseconds)
+        setTimeout(() => resolve("done!"), milliseconds);
     });
 }
-  

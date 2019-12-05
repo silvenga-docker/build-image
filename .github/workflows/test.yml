@@ -1,4 +1,4 @@
-name: "Test typescript-action"
+name: "Test"
 on:
   pull_request:
   push:
@@ -12,9 +12,10 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - run: npm ci
-    - run: npm run build
-    - run: npm test
+    - run: yarn install
+    - run: yarn build
+    - run: yarn test
+
     - uses: ./
-      with: 
+      with:
         milliseconds: 1000
