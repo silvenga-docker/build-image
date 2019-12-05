@@ -47,7 +47,8 @@ export class Docker {
         for (let imageName of context.imageNames) {
             await exec.exec("docker", [
                 "build",
-                `-t ${imageName}`,
+                `--tag`,
+                imageName,
                 ...options,
                 context.buildContext
             ]);
