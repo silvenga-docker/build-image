@@ -12,7 +12,7 @@ export class Docker {
 
         let config = {
             auths: {
-                [loginServer]: {
+                [`https://${loginServer}`]: {
                     auth: new Buffer(`${username}:${password}`).toString("base64")
                 }
             }
