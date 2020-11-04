@@ -31,7 +31,7 @@ export class Action {
 
         let images = await docker.build(
             context,
-            ["--pull"]
+            []
         );
 
         await docker.publish(images);
