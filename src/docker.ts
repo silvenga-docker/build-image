@@ -25,6 +25,7 @@ export class Docker {
         core.debug(`Writing docker config contents to ${dockerConfigPath}`);
         fs.writeFileSync(dockerConfigPath, JSON.stringify(config));
         issueCommand("ENV", `DOCKER_CONFIG=${dirPath}`);
+        process.env.DOCKER_CONFIG = dirPath;
 
         return {
             dockerConfigFile: dirPath,
