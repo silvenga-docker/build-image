@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as io from "@actions/io";
-import { issueCommand } from "@actions/core/lib/command";
+import { issueCommand } from "@actions/core/lib/file-command";
 import * as path from "path";
 import * as fs from "fs";
 import * as exec from "@actions/exec";
@@ -24,7 +24,7 @@ export class Docker {
         const dockerConfigPath = path.join(dirPath, `config.json`);
         core.debug(`Writing docker config contents to ${dockerConfigPath}`);
         fs.writeFileSync(dockerConfigPath, JSON.stringify(config));
-        issueCommand("set-env", { name: "DOCKER_CONFIG" }, dirPath);
+        issueCommand("ENV", `DOCKER_CONFIG=${dirPath}`);
 
         return {
             dockerConfigFile: dirPath,
