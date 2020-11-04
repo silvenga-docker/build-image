@@ -24,6 +24,7 @@ export class Action {
             registry,
             settings.dockerImageName,
             settings.dockerTags,
+            settings.dockerSeedTags,
             settings.workingPath,
             settings.dockerFile
         );
@@ -45,6 +46,7 @@ export interface ISettings {
     dockerPassword: string;
     dockerImageName: string;
     dockerTags: string[];
+    dockerSeedTags: string[];
 }
 
 export function wait(milliseconds: number) {

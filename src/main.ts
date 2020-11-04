@@ -10,6 +10,7 @@ async function run() {
         dockerPassword: core.getInput("dockerPassword", { required: true }),
         dockerImageName: core.getInput("dockerImageName", { required: true }),
         dockerTags: core.getInput("dockerTags", { required: true }).split(","),
+        dockerSeedTags: core.getInput("dockerSeedTags", { required: true }).split(","),
     };
 
     let action = new Action(settings);

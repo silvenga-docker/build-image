@@ -32,21 +32,33 @@ export class Docker {
         };
     }
 
-    public createBuildContext(registry: IRegistry, name: string, tags: string[], buildContext: string = ".", dockerFile: string = "Dockerfile"): IBuildContext {
+    public createBuildContext(registry: IRegistry, name: string, tags: string[], dockerSeedTags: string[], buildContext: string = ".", dockerFile: string = "Dockerfile"): IBuildContext {
         let imageNames: string[] = [];
         for (let tag of tags) {
             let imageName = `${registry.name}/${name}:${tag}`;
             imageNames.push(imageName);
         }
+        let seedImageNames: string[] = [];
+        for (let seedTag of dockerSeedTags) {
+            let imageName = `${registry.name}/${name}:${seedTag}`;
+            seedImageNames.push(imageName);
+        }
         return {
             buildContext,
             dockerFile,
             imageNames,
+            seedImageNames,
             registry,
         };
     }
 
     public async build(context: IBuildContext, options: string[]): Promise<IImages> {
+
+        let cacheFrom = context.seedImageNames
+            .reduce<string[]>((current, next) => {
+                current.push("--cache-from", next);
+                return current;
+            }, []);
 
         for (let imageName of context.imageNames) {
             await exec.exec("docker", [
@@ -54,6 +66,7 @@ export class Docker {
                 `--tag`,
                 imageName,
                 ...options,
+                ...cacheFrom,
                 ...["--build-arg", "BUILDKIT_INLINE_CACHE=1"],
                 context.buildContext
             ]);
@@ -92,6 +105,7 @@ export interface IRegistry {
 export interface IBuildContext {
     registry: IRegistry;
     imageNames: string[];
+    seedImageNames: string[];
     buildContext: string;
     dockerFile: string;
 }
