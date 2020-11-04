@@ -54,6 +54,7 @@ export class Docker {
                 `--tag`,
                 imageName,
                 ...options,
+                ...["--build-arg", "BUILDKIT_INLINE_CACHE=1"],
                 context.buildContext
             ]);
         }
