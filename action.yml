@@ -5,21 +5,28 @@ inputs:
   workingPath:
     description: 'The docker build context.'
     default: '.'
+    required: true
   dockerFile:
     description: 'The docker file.'
     default: 'Dockerfile'
+    required: true
   dockerRegistery:
     description: 'The docker registery.'
     default: 'docker.pkg.github.com'
+    required: true
   dockerUserName:
     description: 'The docker registery username.'
+    required: true
   dockerPassword:
     description: 'The docker registery password.'
+    required: true
   dockerImageName:
     description: 'The docker image name including the repository.'
+    required: true
   dockerTags:
     description: 'The docker image tags, comma separated.'
     default: 'latest'
+    required: true
 runs:
   using: 'node12'
   main: 'lib/src/main.js'
