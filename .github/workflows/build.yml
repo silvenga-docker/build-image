@@ -51,7 +51,7 @@ jobs:
         mv lib/src/ staged/lib/src/
     - name: Deploy Action
       if: github.ref == 'refs/heads/master'
-      uses: s0/git-publish-subdir-action@v2
+      uses: s0/git-publish-subdir-action@v2.4.0
       env:
         REPO: self
         BRANCH: latest
