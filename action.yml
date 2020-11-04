@@ -27,6 +27,10 @@ inputs:
     description: 'The docker image tags, comma separated.'
     default: 'latest'
     required: true
+  dockerSeedTags:
+    description: 'The docker image tags to use as cache, comma separated.'
+    default: 'latest'
+    required: true
 runs:
   using: 'node12'
   main: 'lib/src/main.js'
