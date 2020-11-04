@@ -41,7 +41,7 @@ jobs:
         dockerPassword: ${{ secrets.GITHUB_TOKEN }}
         dockerImageName: ${{ github.repository }}/example
         dockerTags: latest,${{ github.sha }}
-        dockerSeedTags: latest,${{ github.sha }}
+        dockerSeedTags: latest
 
     - name: Stage Deployment
       run: |
