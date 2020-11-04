@@ -4,6 +4,7 @@ import { issueCommand } from "@actions/core/lib/file-command";
 import * as path from "path";
 import * as fs from "fs";
 import * as exec from "@actions/exec";
+import * as os from 'os';
 
 export class Docker {
     public async login(username: string, password: string, loginServer: string): Promise<IRegistry> {
@@ -18,14 +19,22 @@ export class Docker {
             }
         };
 
-        const runnerTempDirectory = process.env.RUNNER_TEMP as string;
-        const dirPath = path.join(runnerTempDirectory, `docker_login_${Date.now()}`);
-        await io.mkdirP(dirPath);
+        const dirPath = process.env.DOCKER_CONFIG || path.join(os.homedir(), '.docker');
+        if (!fs.existsSync(dirPath)) {
+            await io.mkdirP(dirPath);
+        }
         const dockerConfigPath = path.join(dirPath, `config.json`);
+
+        if (fs.existsSync(dockerConfigPath)) {
+            core.debug(`Existing config exists at ${dockerConfigPath}, will merge.`);
+            let existingConfigJson = fs.readFileSync(dockerConfigPath, "utf8");
+            let existingConfig = JSON.parse(existingConfigJson);
+            Object.assign(existingConfig, config);
+            config = existingConfig;
+        }
+
         core.debug(`Writing docker config contents to ${dockerConfigPath}`);
-        fs.writeFileSync(dockerConfigPath, JSON.stringify(config));
-        issueCommand("ENV", `DOCKER_CONFIG=${dirPath}`);
-        process.env.DOCKER_CONFIG = dirPath;
+        fs.writeFileSync(dockerConfigPath, JSON.stringify(config), "utf8");
 
         return {
             dockerConfigFile: dirPath,
